@@ -1,0 +1,57 @@
+{
+  "_comment": "Copy to business-metadata.json and edit. This is an OPTIONAL semantic layer: it does not change security enforcement (still driven by .env allow/deny lists) — it only helps Claude map business terms to real columns and pick correct aggregations.",
+  "glossary": [
+    {
+      "term": "Revenue",
+      "database": "TRP_AMS",
+      "schema": "dbo",
+      "table": "InvoiceHeader",
+      "column": "NetAmt",
+      "description": "Net invoice amount, i.e. revenue excluding tax",
+      "unit": "LKR",
+      "allowedAggregations": ["SUM", "AVG"],
+      "sensitivity": "internal"
+    },
+    {
+      "term": "Orders",
+      "database": "TRP_AMS",
+      "schema": "dbo",
+      "table": "InvoiceHeader",
+      "column": "InvoiceID",
+      "description": "Count of distinct invoices/orders",
+      "unit": "count",
+      "allowedAggregations": ["COUNT_DISTINCT"],
+      "sensitivity": "internal"
+    },
+    {
+      "term": "Invoice Date",
+      "database": "TRP_AMS",
+      "schema": "dbo",
+      "table": "InvoiceHeader",
+      "column": "InvDate",
+      "description": "Date the invoice was issued",
+      "unit": "date",
+      "allowedAggregations": [],
+      "sensitivity": "internal"
+    },
+    {
+      "term": "Region",
+      "database": "TRP_AMS",
+      "schema": "dbo",
+      "table": "Location",
+      "column": "RegionName",
+      "description": "Sales region name",
+      "unit": "category",
+      "allowedAggregations": [],
+      "sensitivity": "internal"
+    }
+  ],
+  "preferredViews": [
+    {
+      "businessArea": "Sales reporting",
+      "preferTable": "dbo.vw_MonthlySalesByRegion",
+      "insteadOfRawTables": ["dbo.InvoiceHeader", "dbo.InvoiceLine", "dbo.Location"],
+      "reason": "Pre-validated, already joins customer/region/date correctly and excludes voided invoices."
+    }
+  ]
+}
