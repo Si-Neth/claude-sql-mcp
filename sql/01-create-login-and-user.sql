@@ -26,27 +26,27 @@ GO
 --    Windows user session — see DATABASE-SETUP.md for why.
 IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name = 'claude_mcp_reader')
 BEGIN
-    CREATE LOGIN claude_mcp_reader
+    CREATE LOGIN claude_mcp_reader@lms-prd-01
         WITH PASSWORD = 'YOUR_STRONG_PASSWORD_HERE',
              CHECK_POLICY = ON,        -- enforce Windows password complexity
              CHECK_EXPIRATION = OFF,   -- rotate manually on a schedule instead
              DEFAULT_DATABASE = TRP_AMS;
-    PRINT 'Login claude_mcp_reader created.';
+    PRINT 'Login claude_mcp_reader@lms-prd-01 created.';
 END
 ELSE
-    PRINT 'Login claude_mcp_reader already exists — skipping creation.';
+    PRINT 'Login claude_mcp_reader@lms-prd-01 already exists — skipping creation.';
 GO
 
 -- 2. Explicitly deny server-level dangerous permissions even though a
 --    freshly created login has none of these by default. This is
 --    belt-and-braces so a future accidental GRANT at the server level is
 --    still blocked for this specific login.
-DENY CONTROL SERVER TO claude_mcp_reader;
-DENY ALTER ANY LOGIN TO claude_mcp_reader;
-DENY ALTER ANY DATABASE TO claude_mcp_reader;
-DENY ALTER SERVER STATE TO claude_mcp_reader;
-DENY ALTER ANY LINKED SERVER TO claude_mcp_reader;
-DENY ALTER ANY CREDENTIAL TO claude_mcp_reader;
+DENY CONTROL SERVER TO claude_mcp_reader@lms-prd-01;
+DENY ALTER ANY LOGIN TO claude_mcp_reader@lms-prd-01;
+DENY ALTER ANY DATABASE TO claude_mcp_reader@lms-prd-01;
+DENY ALTER SERVER STATE TO claude_mcp_reader@lms-prd-01;
+DENY ALTER ANY LINKED SERVER TO claude_mcp_reader@lms-prd-01;
+DENY ALTER ANY CREDENTIAL TO claude_mcp_reader@lms-prd-01;
 GO
 
 -- 3. Create the database user mapped to the login, in TRP_AMS.
@@ -55,13 +55,13 @@ GO
 USE TRP_AMS;
 GO
 
-IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = 'claude_mcp_reader')
+IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = 'claude_mcp_reader@lms-prd-01')
 BEGIN
-    CREATE USER claude_mcp_reader FOR LOGIN claude_mcp_reader;
-    PRINT 'User claude_mcp_reader created in TRP_AMS.';
+    CREATE USER claude_mcp_reader@lms-prd-01 FOR LOGIN claude_mcp_reader@lms-prd-01;
+    PRINT 'User claude_mcp_reader@lms-prd-01 created in TRP_AMS.';
 END
 ELSE
-    PRINT 'User claude_mcp_reader already exists in TRP_AMS — skipping.';
+    PRINT 'User claude_mcp_reader@lms-prd-01 already exists in TRP_AMS — skipping.';
 GO
 
 /* Next step: run 02-grant-readonly-permissions.sql to grant the minimum
