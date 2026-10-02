@@ -78,6 +78,7 @@ function enforceOrigin(req: Request, res: Response, next: NextFunction): void {
 
 export function createApp() {
   const app = express();
+  app.set("trust proxy", 1);
   app.use(helmet());
   app.use(express.json({ limit: "2mb" }));
 
