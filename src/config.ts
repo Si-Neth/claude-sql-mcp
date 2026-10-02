@@ -63,7 +63,7 @@ export const config = {
   },
 
   mcp: {
-    port: intEnv("MCP_PORT", 8787),
+    port: intEnv("PORT", intEnv("MCP_PORT", 8787)),
     publicUrl: optionalEnv("MCP_PUBLIC_URL", ""),
     allowedOrigins: csv(optionalEnv("MCP_ALLOWED_ORIGINS", "https://claude.ai")),
   },
